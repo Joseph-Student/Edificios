@@ -6,7 +6,7 @@
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
 /*checkSolution(M1,M2).*/
 
-% Verifica una vista con la solucion.
+% Verifica una vista con solucion solucion.
 checkView([],[]).
 checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss). 
 
