@@ -1,19 +1,14 @@
 
-make_list(N,[]):-
-	N == [],
-	!.
-make_list([C|R],[C|Rest]):-
-	make_list(R,Rest).
-
-vistas(X,X).
-
 %[[1,2], N [2,1], S [1,2], E-O [2,1]] O-E
-edificio([H|T],[C|R]).
+/*edificio([H|T],[C|R]).*/
 
 % Este predicado verifica si la solucion dada es la correcta.
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
-checkSolution(M1,M2).
+/*checkSolution(M1,M2).*/
 
+% Verifica una vista con la solucion.
+checkView([],[]).
+checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss). 
 
 % Predicado que devuelve cuantos edificios segun una perspectiva.
 % Recibe el edificio anterior(Y), una perspectiva(P) y devuelve el numero de edificios que se ven(N).
@@ -48,9 +43,11 @@ sacaPriMatriz([X|Xs],[Y|Ys]):- sacaPri(X,Y), sacaPriMatriz(Xs,Ys).
 % Obtiene la cabeza de una lista.
 head([X|_],X).
 
-% Predicado para aplicar 2 reglas
-% 1.- los edificios que se ven no puede ser mayor a la vista dada.
-% 2.- en la columna no puede haber un edificio del mismo tamaño.
-% Recibira la vista de una fila(V) y su respectiva columna(C).
-rule(V,C).
+/**
+ * Predicado para aplicar 2 reglas
+ * 1.- los edificios que se ven no puede ser mayor a la vista dada.
+ * 2.- en la columna no puede haber un edificio del mismo tamaño.
+ * Recibira la vista de una fila(V) y su respectiva columna(C).
+ **/
+/*rule(V,C).*/
 
