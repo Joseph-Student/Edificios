@@ -4,17 +4,23 @@
 
 % Este predicado verifica si la solucion dada es la correcta.
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
-/*checkSolution(M1,M2).*/
+checkSolution([V1,V2,V3|Vs],M):- checkView(V3,M), invertirMatriz(M,O), head(Vs,V0), checkView(V0,O),
+									getColumns(M,R), checkView(V1,R), invertirMatriz(R,Sr), checkView(V2,Sr).
 
-% Verifica una vista con solucion solucion.
+% Verifica una vista con su solucion.
 checkView([],[]).
-checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss). 
+checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss).
 
 % Predicado que devuelve cuantos edificios segun una perspectiva.
 % Recibe el edificio anterior(Y), una perspectiva(P) y devuelve el numero de edificios que se ven(N).
 viewEdifice(_,[],0).
 %viewEdifice(Y,[X|Xs],N):- X < Y, viewEdifice(Y,Xs,R), N is R.
 viewEdifice(Y,[X|Xs],N):- X > Y, viewEdifice(X,Xs,R), N is R + 1,!; viewEdifice(Y,Xs,N).
+
+% Invierte una matriz
+invertirMatriz([],[]).
+invertirMatriz([X|Xs],[Y|Ys]):- invertir(X,Y), invertirMatriz(Xs,Ys).
+
 
 % Invierte una lista.
 invertir([X],[X]).
@@ -30,7 +36,7 @@ column([X|Xs],[Y|Ys]):- head(X,Y), column(Xs,Ys).
 
 % Obtiene una matriz con todas las columnas.
 getColumns([[]|_],[]).
-getColumns([X|Xs],[Y|Ys]):- column([X|Xs],Y), sacaPriMatriz([X|Xs],R), getColumns(R,Ys),!.
+getColumns(X,[Y|Ys]):- column(X,Y), sacaPriMatriz(X,R), getColumns(R,Ys),!.
 
 % Saca el primer elemento de una lista.
 sacaPri([],[]).
