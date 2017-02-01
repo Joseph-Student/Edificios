@@ -4,8 +4,8 @@
 
 % Este predicado verifica si la solucion dada es la correcta.
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
-checkSolution([V1,V2,V3|Vs],M):- checkView(V3,M), invertirMatriz(M,O), head(Vs,V0), checkView(V0,O),
-									getColumns(M,R), checkView(V1,R), invertirMatriz(R,Sr), checkView(V2,Sr).
+checkSolution([N,S,E|Vs],M):- checkView(E,M), invertirMatriz(M,Oe), head(Vs,O), checkView(O,Oe),
+									getColumns(M,Nr), checkView(N,Nr), invertirMatriz(Nr,Sr), checkView(S,Sr).
 
 % Verifica una vista con su solucion.
 checkView([],[]).
@@ -15,12 +15,11 @@ checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss).
 % Recibe el edificio anterior(Y), una perspectiva(P) y devuelve el numero de edificios que se ven(N).
 viewEdifice(_,[],0).
 %viewEdifice(Y,[X|Xs],N):- X < Y, viewEdifice(Y,Xs,R), N is R.
-viewEdifice(Y,[X|Xs],N):- X > Y, viewEdifice(X,Xs,R), N is R + 1,!; viewEdifice(Y,Xs,N).
+viewEdifice(Y,[X|Xs],N):- X > Y, viewEdifice(X,Xs,R), N is R + 1, !; viewEdifice(Y,Xs,N).
 
 % Invierte una matriz
 invertirMatriz([],[]).
 invertirMatriz([X|Xs],[Y|Ys]):- invertir(X,Y), invertirMatriz(Xs,Ys).
-
 
 % Invierte una lista.
 invertir([X],[X]).
@@ -48,6 +47,22 @@ sacaPriMatriz([X|Xs],[Y|Ys]):- sacaPri(X,Y), sacaPriMatriz(Xs,Ys).
 
 % Obtiene la cabeza de una lista.
 head([X|_],X).
+
+% Devuelve el tamaño de una lista
+sizeList([],0).
+sizeList([_|Xs],N):- sizeList(Xs,N1), N is N1 + 1.
+
+value(1).
+value(2).
+value(3).
+value(4).
+value(5).
+value(6).
+value(7).
+value(8).
+value(9).
+value(10).
+
 
 /**
  * Predicado para aplicar 2 reglas
