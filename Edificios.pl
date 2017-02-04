@@ -5,11 +5,15 @@
 % Este predicado verifica si la solucion dada es la correcta.
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
 checkSolution([N,S,E|Vs],M):- checkView(E,M), invertirMatriz(M,Oe), head(Vs,O), checkView(O,Oe),
-									getColumns(M,Nr), checkView(N,Nr), invertirMatriz(Nr,Sr), checkView(S,Sr).
+							getColumns(M,Nr), checkView(N,Nr), invertirMatriz(Nr,Sr), checkView(S,Sr).
 
-% Verifica una vista con su solucion.
-checkView([],[]).
-checkView([V|Vs],[S|Ss]):- viewEdifice(0,S,N), V == N, checkView(Vs,Ss).
+% Verifica las vista con su solucion.
+checkViews([],[]).
+checkViews([V|Vs],[S|Ss]):- checkView(V,S), checkViews(Vs,Ss).
+
+% Verifica una vista con su respectiva fila de solucion
+checkView(_,[]).
+checkView(N,F):- viewEdifice(0,F,V), V == N.
 
 % Predicado que devuelve cuantos edificios segun una perspectiva.
 % Recibe el edificio anterior(Y), una perspectiva(P) y devuelve el numero de edificios que se ven(N).
@@ -29,13 +33,17 @@ invertir([X|M],Z):- invertir(M,S), concatenar(S,[X],Z),!.
 concatenar([],L,L).
 concatenar([X|M],L,[X|Z]):- concatenar(M,L,Z).
 
-% Obtiene la primera columna de una matriz.
-column([],[]).
-column([X|Xs],[Y|Ys]):- head(X,Y), column(Xs,Ys).
+% Obtiene la N columna de una matriz.
+column([X|_],0,X):-!.
+column([_|Xs],N,Ys):- M is N - 1, column(Xs,M,Ys),!.
+
+% Obtine la primera columna de una matriz.
+columns([],_,[]).
+columns([X|Xs],N,[Y|Ys]):- column(X,N,Y), columns(Xs,N,Ys),!.
 
 % Obtiene una matriz con todas las columnas.
 getColumns([[]|_],[]).
-getColumns(X,[Y|Ys]):- column(X,Y), sacaPriMatriz(X,R), getColumns(R,Ys),!.
+getColumns(X,[Y|Ys]):- columns(X,0,Y), sacaPriMatriz(X,R), getColumns(R,Ys),!.
 
 % Saca el primer elemento de una lista.
 sacaPri([],[]).
@@ -52,6 +60,7 @@ head([X|_],X).
 sizeList([],0).
 sizeList([_|Xs],N):- sizeList(Xs,N1), N is N1 + 1.
 
+% Tamaño de pisos de los edificios.
 value(1).
 value(2).
 value(3).
@@ -63,6 +72,14 @@ value(8).
 value(9).
 value(10).
 
+ponervalor([],_,_,[]).
+ponervalor([Cab|Cola],Pos,V,[Cabf|Colaf]):- Pos == 0, Pos2 is Pos-1, ponervalor(Cola,Pos2,V,Colaf);
+											Pos \== 0, Cabf is Cab, Pos2 is Pos-1, ponervalor(Cola,Pos2,V,Colaf).
+
+
+% Si todos los elementos de la lista son diferentes entre si.
+diferente(_,[]).
+diferente(N,[H|T]):- N \== H, diferente(N,T),!.
 
 /**
  * Predicado para aplicar 2 reglas
@@ -70,5 +87,10 @@ value(10).
  * 2.- en la columna no puede haber un edificio del mismo tamaño.
  * Recibira la vista de una fila(V) y su respectiva columna(C).
  **/
-/*rule(V,C).*/
 
+%rule(V,F,C,N):- value(N), ponervalor(), diferente(F), diferente(C).
+
+comprobarValor(V,F,C,N):- diferente(N,F), diferente(N,C), append(F,[N],L), viewEdifice(0,L,T), T =< V.
+
+
+%resolver([V1,Vs],S).
