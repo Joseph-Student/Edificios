@@ -4,16 +4,17 @@
 
 % Este predicado verifica si la solucion dada es la correcta.
 % Va a recibir 2 matrices (M1,M2), M1 son las vistas y M2 es la posible solucion.
-checkSolution([N,S,E|Vs],M):- checkView(E,M), invertirMatriz(M,Oe), head(Vs,O), checkView(O,Oe),
-							getColumns(M,Nr), checkView(N,Nr), invertirMatriz(Nr,Sr), checkView(S,Sr).
+checkSolution([N,S,E|Vs],M):- checkViews(E,M), invertirMatriz(M,Oe), head(Vs,O), checkViews(O,Oe),
+							getColumns(M,Nr), checkViews(N,Nr), invertirMatriz(Nr,Sr), checkViews(S,Sr).
 
 % Verifica las vista con su solucion.
 checkViews([],[]).
+checkViews([_],[]).
 checkViews([V|Vs],[S|Ss]):- checkView(V,S), checkViews(Vs,Ss).
 
 % Verifica una vista con su respectiva fila de solucion
 checkView(_,[]).
-checkView(N,F):- viewEdifice(0,F,V), V == N.
+checkView(N,F):- viewEdifice(0,F,V), V =< N.
 
 % Predicado que devuelve cuantos edificios segun una perspectiva.
 % Recibe el edificio anterior(Y), una perspectiva(P) y devuelve el numero de edificios que se ven(N).
@@ -34,16 +35,23 @@ concatenar([],L,L).
 concatenar([X|M],L,[X|Z]):- concatenar(M,L,Z).
 
 % Obtiene la N columna de una matriz.
+column([],_,[]).
 column([X|_],0,X):-!.
 column([_|Xs],N,Ys):- M is N - 1, column(Xs,M,Ys),!.
 
 % Obtine la primera columna de una matriz.
 columns([],_,[]).
+columns([X|_],N,[]):- columns(X,N,Y), Y == [].
 columns([X|Xs],N,[Y|Ys]):- column(X,N,Y), columns(Xs,N,Ys),!.
 
 % Obtiene una matriz con todas las columnas.
 getColumns([[]|_],[]).
 getColumns(X,[Y|Ys]):- columns(X,0,Y), sacaPriMatriz(X,R), getColumns(R,Ys),!.
+
+% Obtiene una fila dada.
+getRow([],_,[]).
+getRow([X],0,X).
+getRow([_|Xs],N,Y):- N1 is N -1, getRow(Xs,N1,Y),!.
 
 % Saca el primer elemento de una lista.
 sacaPri([],[]).
@@ -88,15 +96,17 @@ diferente(N,[H|T]):- N \== H, diferente(N,T),!.
 
 /**
  * Predicado para aplicar 2 reglas
- * 1.- los edificios que se ven no puede ser mayor a la vista dada.
- * 2.- en la columna no puede haber un edificio del mismo tamaño.
+ * 1.- Los edificios que se ven no puede ser mayor a la vista dada.
+ * 2.- En la columna no puede haber un edificio del mismo tamaño.
  * Recibira la vista de una fila(V) y su respectiva columna(C).
  **/
+comprobarValor(V,F,C,N):- diferente(N,F), diferente(N,C), concatenar(F,[N],L), viewEdifice(0,L,T), T =< V.
 
-%rule(V,F,C,N):- value(N), ponervalor(), diferente(F), diferente(C).
+% Resuelve el juego.
+%resolver(V,S):- not(checkSolution(V,S)), resolver().
+resolver(V,Size,Nc,Nf,S):- value(Num), Num =< Size, getRow(S,Nf,F), columns(S,Nc,C), getRow(V,3,V3),
+					column(V3,Nc,E), comprobarValor(E,F,C,Num), addValue(S,Size,Num,R), N1 is Nc + 1, fila(Nc,Size,Nf,B),
+					checkSolution(V,R), resolver(V,Size,N1,B,R).
 
-% Comprueba que el valor dado se puede colocar.
-comprobarValor(V,F,C,N):- diferente(N,F), diferente(N,C), append(F,[N],L), viewEdifice(0,L,T), T =< V.
 
-
-%resolver([V1,Vs],S):- 
+fila(N,M,S,B):- N == M, B is S + 1; B is S.
