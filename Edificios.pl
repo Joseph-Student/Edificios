@@ -72,9 +72,14 @@ value(8).
 value(9).
 value(10).
 
-ponervalor([],_,_,[]).
-ponervalor([Cab|Cola],Pos,V,[Cabf|Colaf]):- Pos == 0, Pos2 is Pos-1, ponervalor(Cola,Pos2,V,Colaf);
-											Pos \== 0, Cabf is Cab, Pos2 is Pos-1, ponervalor(Cola,Pos2,V,Colaf).
+% Verifica si es una matriz.
+list([X|_]):- value(M), X == M,!.
+
+
+% Agrega el valor a la solucion.
+addValue([],_,Num,[[Num]]).
+addValue([H|T],Size,Num,L):- sizeList(H,Y), Y == Size, addValue(T,Size,Num,Z), (list(Z), concatenar([H],[Z],L); concatenar([H],Z,L)),!.
+addValue([H|_],Size,Num,[L]):- sizeList(H,Y), Y < Size, concatenar(H,[Num],L).
 
 
 % Si todos los elementos de la lista son diferentes entre si.
@@ -90,7 +95,8 @@ diferente(N,[H|T]):- N \== H, diferente(N,T),!.
 
 %rule(V,F,C,N):- value(N), ponervalor(), diferente(F), diferente(C).
 
+% Comprueba que el valor dado se puede colocar.
 comprobarValor(V,F,C,N):- diferente(N,F), diferente(N,C), append(F,[N],L), viewEdifice(0,L,T), T =< V.
 
 
-%resolver([V1,Vs],S).
+%resolver([V1,Vs],S):- 
