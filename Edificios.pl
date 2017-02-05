@@ -41,8 +41,7 @@ column([_|Xs],N,Ys):- M is N - 1, column(Xs,M,Ys),!.
 
 % Obtine la primera columna de una matriz.
 columns([],_,[]).
-columns([X|_],N,[]):- columns(X,N,Y), Y == [].
-columns([X|Xs],N,[Y|Ys]):- column(X,N,Y), columns(Xs,N,Ys),!.
+columns([X|Xs],N,Z):- column(X,N,Y), columns(Xs,N,Ys), (Y == [], concatenar(Y,Ys,Z),!; concatenar([Y],Ys,Z)).
 
 % Obtiene una matriz con todas las columnas.
 getColumns([[]|_],[]).
@@ -104,9 +103,9 @@ comprobarValor(V,F,C,N):- diferente(N,F), diferente(N,C), concatenar(F,[N],L), v
 
 % Resuelve el juego.
 %resolver(V,S):- not(checkSolution(V,S)), resolver().
-resolver(V,Size,Nc,Nf,S):- value(Num), Num =< Size, getRow(S,Nf,F), columns(S,Nc,C), getRow(V,3,V3),
-					column(V3,Nc,E), comprobarValor(E,F,C,Num), addValue(S,Size,Num,R), N1 is Nc + 1, fila(Nc,Size,Nf,B),
-					checkSolution(V,R), resolver(V,Size,N1,B,R).
+resolver(V,Size,Nc,Nf,S):- getRow(S,Nf,F), columns(S,Nc,C), getRow(V,3,V3), column(V3,Nc,E), value(Num), Num =< Size,
+							comprobarValor(E,F,C,Num), addValue(S,Size,Num,R), N1 is Nc + 1, fila(Nc,Size,Nf,B),
+							checkSolution(V,R), resolver(V,Size,N1,B,R).
 
 
 fila(N,M,S,B):- N == M, B is S + 1; B is S.
