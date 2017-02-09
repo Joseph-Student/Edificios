@@ -64,7 +64,7 @@ sacaPriMatriz([X|Xs],[Y|Ys]):- sacaPri(X,Y), sacaPriMatriz(Xs,Ys),!.
 head([X|_],X).
 
 % Devuelve el tamaño de una lista
-sizeList([],0).
+sizeList([],0):-!.
 sizeList([_|Xs],N):- sizeList(Xs,N1), N is N1 + 1,!.
 
 % Tamaño de pisos de los edificios.
@@ -105,7 +105,7 @@ comprobarValor(V,S,Nf,Nc,N):- getRow(S,Nf,F), diferente(N,F), columns(S,Nc,C), d
 % Resuelve el juego.
 resolver(V,_,_,_,S):- checkSolution(V,S), mostrar(S),!.
 resolver(V,Size,Nc,Nf,S):- value(Num), Num =< Size, comprobarValor(V,S,Nf,Nc,Num), addValue(S,Size,Num,R), 
-							fila(Nc,Size,Nf,B), columna(Nc,Size,T), checkRow(Size,Nc,Nf,V,R), checkColumn(Size,Nc,Nf,V,R),
+							fila(Nc,Size,Nf,B), columna(Nc,Size,T), checkRow(Size,Nc,Nf,V,R), 
 							resolver(V,Size,T,B,R),!.
 
 % Verifica la vista desde el oeste.
@@ -127,3 +127,6 @@ columna(N,M,B):- (K is M - 1, N == K , B is 0),!; B is N +1,!.
 % muestra una matriz
 mostrar([]) :- write("\n"),!.		
 mostrar([X|Xs]) :-  write(X), write("\n"), mostrar(Xs),!.
+
+% Predicado principal para empezar a resolver el juego.
+vistas(V):- head(V,Y), sizeList(Y,Size), resolver(V,Size,0,0,[]),!.
